@@ -16,6 +16,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include "index.h"
+#include "object.h"
 
 // ─── Mode Constants ─────────────────────────────────────────────────────────
 
@@ -147,7 +148,7 @@ for (int i = 0; i < index.count; i++) {
 
     strcpy(te->name, e->path);
     te->mode = e->mode;
-    te->hash = e->id;
+    te->hash = e->hash;
 }
 
 void *data;
