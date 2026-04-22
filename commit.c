@@ -202,4 +202,15 @@ if (tree_from_index(&tree_id) < 0)
     return -1;
 char tree_hex[HASH_HEX_SIZE + 1];
 hash_to_hex(&tree_id, tree_hex);
+char buffer[1024];
+
+snprintf(buffer, sizeof(buffer),
+         "tree %s\n"
+         "author %s\n"
+         "committer %s\n\n"
+         "%s\n",
+         tree_hex,
+         getenv("PES_AUTHOR"),
+         getenv("PES_AUTHOR"),
+         message);
 }
