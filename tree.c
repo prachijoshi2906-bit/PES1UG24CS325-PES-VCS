@@ -149,4 +149,9 @@ for (int i = 0; i < index.count; i++) {
     te->hash = e->id;
 }
 
+void *data;
+size_t len;
+
+if (tree_serialize(&tree, &data, &len) < 0) return -1;
+
 }
