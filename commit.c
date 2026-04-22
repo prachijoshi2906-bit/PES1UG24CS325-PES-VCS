@@ -216,4 +216,5 @@ snprintf(buffer, sizeof(buffer),
 
 if (object_write(OBJ_COMMIT, buffer, strlen(buffer), id_out) < 0)
     return -1;
+return 0;
 }
