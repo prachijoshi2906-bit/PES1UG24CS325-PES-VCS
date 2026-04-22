@@ -141,10 +141,28 @@ FILE *f = fopen(INDEX_FILE, "r");
 
 if (!f) {
     idx->count = 0;
-    return 0; // empty index is fine
+    return 0;
 }
 
 idx->count = 0;
+
+while (!feof(f) && idx->count < MAX_INDEX_ENTRIES) {
+    IndexEntry *e = &idx->entries[idx->count];
+
+    char hash_hex[HASH_HEX_SIZE + 1];
+
+    if (fscanf(f, "%o %64s %ld %zu %[^\n]\n",
+               &e->mode,
+               hash_hex,
+               &e->mtime,
+               &e->size,
+               e->path) == 5) {
+
+        hex_to_hash(hash_hex, &e->hash);
+        idx->count++;
+    }
+}
+
 fclose(f);
 return 0;
 }
