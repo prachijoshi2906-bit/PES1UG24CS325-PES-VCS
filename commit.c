@@ -213,4 +213,7 @@ snprintf(buffer, sizeof(buffer),
          getenv("PES_AUTHOR"),
          getenv("PES_AUTHOR"),
          message);
+
+if (object_write(OBJ_COMMIT, buffer, strlen(buffer), id_out) < 0)
+    return -1;
 }
