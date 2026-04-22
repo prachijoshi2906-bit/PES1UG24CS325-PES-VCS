@@ -139,4 +139,14 @@ if (index_load(&index) < 0) return -1;
 Tree tree;
 tree.count = 0;
 
+for (int i = 0; i < index.count; i++) {
+    IndexEntry *e = &index.entries[i];
+
+    TreeEntry *te = &tree.entries[tree.count++];
+
+    strcpy(te->name, e->path);
+    te->mode = e->mode;
+    te->hash = e->id;
+}
+
 }
