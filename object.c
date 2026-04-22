@@ -17,6 +17,24 @@
 #include <unistd.h>
 #include <openssl/evp.h>
 
+size_t total_len = header_len + len;
+unsigned char *full = malloc(total_len);
+
+memcpy(full, header, header_len);
+memcpy(full + header_len, data, len);
+
+unsigned char hash[SHA256_DIGEST_LENGTH];
+SHA256(full, total_len, hash);
+
+char hex[SHA256_DIGEST_LENGTH * 2 + 1];
+
+for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
+    sprintf(hex + i * 2, "%02x", hash[i]);
+}
+
+hex[64] = '\0';
+
+strcpy(id_out->hash, hex);
 // ─── PROVIDED ────────────────────────────────────────────────────────────────
 
 void hash_to_hex(const ObjectID *id, char *hex_out) {
