@@ -230,4 +230,30 @@ if (object_write(OBJ_BLOB, data, st.st_size, &id) < 0) {
 }
 
 free(data);
+
+int found = -1;
+
+for (int i = 0; i < idx->count; i++) {
+    if (strcmp(idx->entries[i].path, path) == 0) {
+        found = i;
+        break;
+    }
+}
+
+IndexEntry *e;
+
+if (found >= 0) {
+    e = &idx->entries[found];
+} else {
+    e = &idx->entries[idx->count++];
+}
+
+e->mode = get_file_mode(path);
+e->hash = id;
+e->mtime = st.st_mtime;
+e->size = st.st_size;
+strcpy(e->path, path);
+
+return index_save(idx);
+
 }
