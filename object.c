@@ -165,7 +165,43 @@ int object_write(ObjectType type, const void *data, size_t len, ObjectID *id_out
 // The caller is responsible for calling free(*data_out).
 // Returns 0 on success, -1 on error (file not found, corrupt, etc.).
 int object_read(const ObjectID *id, ObjectType *type_out, void **data_out, size_t *len_out) {
-    // TODO: Implement
-    (void)id; (void)type_out; (void)data_out; (void)len_out;
+char path[200];
+snprintf(path, sizeof(path), ".pes/objects/%.2s/%s", id->hash, id->hash + 2);
+
+FILE *f = fopen(path, "rb");
+if (!f) return -1;
+
+fseek(f, 0, SEEK_END);
+long size = ftell(f);
+rewind(f);
+
+unsigned char *buffer = malloc(size);
+if (!buffer) {
+    fclose(f);
     return -1;
+}
+
+fread(buffer, 1, size, f);
+fclose(f);
+
+char *header = (char *)buffer;
+char *data_start = strchr(header, '\0');
+if (!data_start) {
+    free(buffer);
+    return -1;
+}
+data_start++;
+
+if (strncmp(header, "blob", 4) == 0) *type_out = OBJ_BLOB;
+else if (strncmp(header, "tree", 4) == 0) *type_out = OBJ_TREE;
+else if (strncmp(header, "commit", 6) == 0) *type_out = OBJ_COMMIT;
+else {
+    free(buffer);
+    return -1;
+}
+
+*data_out = data_start;
+*len_out = size - (data_start - header);
+
+return 0;
 }
