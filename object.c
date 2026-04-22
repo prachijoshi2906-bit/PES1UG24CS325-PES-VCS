@@ -35,6 +35,26 @@ for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
 hex[64] = '\0';
 
 strcpy(id_out->hash, hex);
+
+char dir[100], path[200];
+
+snprintf(dir, sizeof(dir), ".pes/objects/%.2s", hex);
+mkdir(dir, 0777);
+
+snprintf(path, sizeof(path), "%s/%s", dir, hex + 2);
+
+FILE *f = fopen(path, "wb");
+if (!f) {
+    free(full);
+    return -1;
+}
+
+fwrite(full, 1, total_len, f);
+fclose(f);
+
+free(full);
+return 0;
+
 // ─── PROVIDED ────────────────────────────────────────────────────────────────
 
 void hash_to_hex(const ObjectID *id, char *hex_out) {
